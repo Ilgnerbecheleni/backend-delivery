@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+/// Enum para tipo de usuário
+enum Role {
+  USER
+  ADMIN
+  
+}
+
+/// Enum para tipo de transação
+enum TransacaoTipo {
+  ENTRADA
+  SAQUE
+}
+
+model User {
+  id            String          @id @default(uuid())
+  nome          String
+  email         String          @unique
+  password     String         
+  cpf           String          @unique
+  resetPass   Boolean?          @default(false)
+  role          Role
+  placaVeiculo  String?         @map("placa_veiculo")
+  verificado  Boolean?            @default(false)
+  /// 1-1 opcional com Address (a FK está em Address)
+  address       Address?
+
+  /// Relações 1-N:
+  ///   - Se for comerciante, ele cria várias entregas.
+  entregasComoComerciante Delivery[] @relation("ComercianteEntregas")
+  ///   - Se for entregador, recebe várias entregas.
+  entregasComoEntregador  Delivery[] @relation("EntregadorEntregas")
+
+  /// Transações (somente para entregador)
+  transacoes   Transacao[]
+
+  /// 1-1 opcional com Saldo (somente faz sentido quando tipo = ENTREGADOR)
+  saldo        Saldo?        @relation("EntregadorSaldo")
+
+  @@map("usuarios")
+}
+
+model Address {
+  id         String  @id @default(uuid())
+  user       User    @relation(fields: [userId], references: [id])
+  userId     String  @unique @map("userid")
+  logradouro String
+  numero     String
+  bairro     String
+  cidade     String
+  uf         String
+  cep        String
+
+  @@map("endereco_users")
+}
+
+model Delivery {
+  id               String       @id @default(uuid())
+  comerciante      User         @relation("ComercianteEntregas", fields: [idComerciante], references: [id])
+  idComerciante    String       @map("id_comerciante")
+  entregador       User         @relation("EntregadorEntregas",    fields: [idEntregador],    references: [id])
+  idEntregador     String       @map("id_entregador")
+  enderecoColeta   String       @map("endereco_coleta")
+  enderecoEntrega  String       @map("endereco_entrega")
+  tipo             String
+  descricao        String
+  status           String
+  valor            Decimal
+  dataCriacao      DateTime     @default(now()) @map("data_criacao")
+
+  /// 1-1 opcional com Avaliacao (cada entrega pode ter no máximo 1 avaliação)
+  avaliacao        Avaliacao?
+
+  @@map("entregas")
+}
+
+model Avaliacao {
+  id         String   @id @default(uuid())
+  entrega    Delivery @relation(fields: [idEntrega], references: [id])
+  idEntrega  String   @unique @map("id_entrega")
+  nota       Int
+  comentario String
+
+  @@map("avaliacoes")
+}
+
+model Transacao {
+  id            String         @id @default(uuid())
+  entregador    User           @relation(fields: [idEntregador], references: [id])
+  idEntregador  String         @map("id_entregador")
+  valor         Decimal
+  tipo          TransacaoTipo
+  data          DateTime       @default(now())
+
+  @@map("transacoes")
+}
+
+/// Nova tabela Saldo para entregadores
+model Saldo {
+  id            String  @id @default(uuid())
+  entregador    User    @relation("EntregadorSaldo", fields: [idEntregador], references: [id])
+  idEntregador  String  @unique @map("id_entregador")
+  saldoAtual    Decimal @map("saldo_atual")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("saldos")
+}

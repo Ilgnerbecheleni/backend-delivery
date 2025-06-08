@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Bem-vindo!</title>
+  <style>
+    body { background: #f5f6fa; font-family: 'Segoe UI', Arial, sans-serif; }
+    .container { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 32px 24px; }
+    .header { text-align: center; padding-bottom: 24px; }
+    .title { color: #2d3436; font-size: 28px; margin: 0; }
+    .content { color: #636e72; font-size: 17px; line-height: 1.6; margin: 24px 0; }
+    .footer { text-align: center; color: #b2bec3; font-size: 13px; margin-top: 32px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Olá, {{name}}!</h1>
+    </div>
+    <div class="content">
+      {{message}}
+    </div>
+    <div class="footer">
+      &copy; {{year}} Sua Empresa. Todos os direitos reservados.
+    </div>
+  </div>
+</body>
+</html>
