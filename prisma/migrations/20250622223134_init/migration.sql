@@ -6,7 +6,7 @@ CREATE TABLE `usuarios` (
     `password` VARCHAR(191) NOT NULL,
     `cpf` VARCHAR(191) NOT NULL,
     `resetPass` BOOLEAN NULL DEFAULT false,
-    `role` ENUM('USER', 'ADMIN') NOT NULL,
+    `role` ENUM('ENTREGADOR', 'COMERCIANTE') NOT NULL,
     `placa_veiculo` VARCHAR(191) NULL,
     `verificado` BOOLEAN NULL DEFAULT false,
 

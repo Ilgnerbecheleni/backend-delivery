@@ -10,7 +10,7 @@ email: string;
 @IsString()
 password:string;
 @IsString()
-  @IsIn(['USER', 'ADMIN'], { message: 'Role deve ser USER ou ADMIN' })
+  @IsIn(['ENTREGADOR', 'COMERCIANTE'], { message: 'Role deve ser USER ou ADMIN' })
   role: string;
 @IsString()
 cpf:string

@@ -18,8 +18,8 @@ datasource db {
 
 /// Enum para tipo de usuário
 enum Role {
-  USER
-  ADMIN
+  ENTREGADOR
+  COMERCIANTE
   
 }
 
